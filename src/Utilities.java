@@ -8,7 +8,6 @@ public class Utilities {
 	private static String firstLPrim = "0123456789E";
 	private static String firstR = "0123456789";
 	private static String firstRPrim = ".E";
-
 	private static String firstP = "0123456789(";
 	private static String firstWPrim = "*:+-^E";
 	private static String firstW = "0123456789(";
@@ -20,6 +19,7 @@ public class Utilities {
 	private static char currentSymbol;
 
 	public static boolean funcS() {
+		System.out.println("S");
 		if (isInFirst(firstS)) {
 			if (funcW()) {
 				if (currentSymbol == ';') {
@@ -34,6 +34,7 @@ public class Utilities {
 	}
 
 	public static boolean funcZ() {
+		System.out.println("Z");
 		if (isInFirst(firstZ)) {
 			if (funcW()) {
 				if (currentSymbol == ';') {
@@ -50,7 +51,7 @@ public class Utilities {
 	}
 
 	public static boolean funcW() {
-		System.out.println("Wchodzi W");
+		System.out.println("W");
 		if (isInFirst(firstW)) {
 			if (funcP() && funcWPrim()) {
 				return true;
@@ -60,6 +61,7 @@ public class Utilities {
 	}
 
 	public static boolean funcWPrim() {
+		System.out.println("W'");
 		if (isInFirst(firstWPrim)) {
 			if (funcO() && funcW()) {
 				return true;
@@ -71,7 +73,7 @@ public class Utilities {
 	}
 
 	public static boolean funcP() {
-		System.out.println("Wchodzi P");
+		System.out.println("P");
 		if (isInFirst(firstP)) {
 			if (currentSymbol == '(') {
 				loadSymbol();
@@ -90,6 +92,7 @@ public class Utilities {
 	}
 
 	public static boolean funcR() {
+		System.out.println("R");
 		if (isInFirst(firstR)) {
 			if (funcL() && funcRPrim()) {
 				return true;
@@ -103,6 +106,7 @@ public class Utilities {
 	}
 
 	public static boolean funcRPrim() {
+		System.out.println("R'");
 		if (isInFirst(firstRPrim)) {
 			loadSymbol();
 			if (funcL()) {
@@ -116,6 +120,7 @@ public class Utilities {
 	}
 
 	public static boolean funcL() {
+		System.out.println("L");
 		if (isInFirst(firstL)) {
 			if (funcC() && funcLPrim()) {
 				return true;
@@ -129,6 +134,7 @@ public class Utilities {
 	}
 
 	public static boolean funcLPrim() {
+		System.out.println("L'");
 		if (isInFirst(firstLPrim)) {
 			if (funcL()) {
 				return true;
@@ -142,6 +148,7 @@ public class Utilities {
 	}
 
 	public static boolean funcC() {
+		System.out.println("C");
 		if (isInFirst(firstC)) {
 			if (loadSymbol()) {
 				return true;
@@ -151,6 +158,7 @@ public class Utilities {
 	}
 
 	public static boolean funcO() {
+		System.out.println("O");
 		if (isInFirst(firstO)) {
 			if (loadSymbol()) {
 				return true;
@@ -164,17 +172,8 @@ public class Utilities {
 			iterator++;
 			currentSymbol = charArray[iterator];
 			System.out.println("Current char(load): " + currentSymbol);
-			return true;
-		} else {
-			System.exit(0);
-			return false;
 		}
-	}
-
-	public static void unloadSymbol() {
-		iterator--;
-		currentSymbol = charArray[iterator];
-		System.out.println("Current char(unload): " + currentSymbol);
+		return true;
 	}
 
 	public static void init() {
@@ -184,6 +183,9 @@ public class Utilities {
 	}
 
 	public static boolean isInFirst(String first) {
+		if (isFinished()) {
+			return false;
+		}
 		if (first.indexOf(currentSymbol) != -1) {
 			return true;
 		}
@@ -191,10 +193,33 @@ public class Utilities {
 	}
 
 	public static boolean isInFirstEpsilon(String first) {
-		if (first.indexOf('E') != -1 || iterator == charArray.length) {
+		if (first.indexOf('E') != -1) {
+			System.out.println("Epsilon");
 			return true;
 		}
 		return false;
+	}
+
+	public static boolean isFinished() {
+		if (iterator == charArray.length - 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static void printResult(boolean result)
+	{
+		if (result == true) {
+			System.out.println("Symbole zgodne z gramatyka");
+		}
+		else
+		{
+			System.out.println("Symbole niezgodne z gramatyka!");
+		}
+	}
+	
+	public static boolean start() {
+		return funcS();
 	}
 
 }
