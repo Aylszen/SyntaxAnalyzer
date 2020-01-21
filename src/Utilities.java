@@ -8,9 +8,86 @@ public class Utilities {
 	private static String firstLPrim = "0123456789E";
 	private static String firstR = "0123456789";
 	private static String firstRPrim = ".E";
+
+	private static String firstP = "0123456789(";
+	private static String firstWPrim = "*:+-^E";
+	private static String firstW = "0123456789(";
+	private static String firstZ = "0123456789(E";
+	private static String firstS = "0123456789(";
+
 	private static int iterator = 0;
-	public static char[] charArray = new char[100];
+	public static char[] charArray;
 	private static char currentSymbol;
+
+	public static boolean funcS() {
+		if (isInFirst(firstS)) {
+			if (funcW()) {
+				if (currentSymbol == ';') {
+					loadSymbol();
+					if (funcZ()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean funcZ() {
+		if (isInFirst(firstZ)) {
+			if (funcW()) {
+				if (currentSymbol == ';') {
+					loadSymbol();
+					if (funcZ()) {
+						return true;
+					}
+				}
+			}
+		} else if (isInFirstEpsilon(firstZ)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean funcW() {
+		System.out.println("Wchodzi W");
+		if (isInFirst(firstW)) {
+			if (funcP() && funcWPrim()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean funcWPrim() {
+		if (isInFirst(firstWPrim)) {
+			if (funcO() && funcW()) {
+				return true;
+			}
+		} else if (isInFirstEpsilon(firstWPrim)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean funcP() {
+		System.out.println("Wchodzi P");
+		if (isInFirst(firstP)) {
+			if (currentSymbol == '(') {
+				loadSymbol();
+				if (funcW()) {
+					if (currentSymbol == (')')) {
+						loadSymbol();
+						System.out.println("Weszlo )");
+						return true;
+					}
+				}
+			} else if (funcR()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public static boolean funcR() {
 		if (isInFirst(firstR)) {
@@ -39,7 +116,7 @@ public class Utilities {
 	}
 
 	public static boolean funcL() {
-		if (isInFirst(firstLPrim)) {
+		if (isInFirst(firstL)) {
 			if (funcC() && funcLPrim()) {
 				return true;
 			}
@@ -58,7 +135,6 @@ public class Utilities {
 			}
 
 		} else if (isInFirstEpsilon(firstLPrim)) {
-			//unloadSymbol();
 			return true;
 		}
 
@@ -79,7 +155,6 @@ public class Utilities {
 			if (loadSymbol()) {
 				return true;
 			}
-
 		}
 		return false;
 	}
@@ -116,7 +191,7 @@ public class Utilities {
 	}
 
 	public static boolean isInFirstEpsilon(String first) {
-		if (first.indexOf('E') != -1) {
+		if (first.indexOf('E') != -1 || iterator == charArray.length) {
 			return true;
 		}
 		return false;

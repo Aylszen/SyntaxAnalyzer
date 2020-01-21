@@ -8,7 +8,7 @@ public class SyntaxAnalyzer {
         String symbols = scan.nextLine();
         Utilities.charArray = symbols.toCharArray();
         Utilities.init();
-        System.out.println("Witaj " + Utilities.funcR());
+        System.out.println("Witaj " + Utilities.funcS());
 	}
 
 }
