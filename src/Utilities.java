@@ -13,7 +13,8 @@ public class Utilities {
 	private static String firstW = "0123456789(";
 	private static String firstZ = "0123456789(E";
 	private static String firstS = "0123456789(";
-
+	
+	private static String endMarkSymbol = " ";
 	private static int iterator = 0;
 	public static char[] charArray;
 	private static char currentSymbol;
@@ -171,7 +172,13 @@ public class Utilities {
 		if (iterator + 1 < charArray.length) {
 			iterator++;
 			currentSymbol = charArray[iterator];
-			System.out.println("Current char(load): " + currentSymbol);
+			if (!(currentSymbol == endMarkSymbol.charAt(0) && isFinished()))
+			{
+				System.out.println("Current char(load): " + currentSymbol);
+			} else
+			{
+				System.out.println("No more symbols to read!");
+			}
 		}
 		return true;
 	}
@@ -220,6 +227,12 @@ public class Utilities {
 	
 	public static boolean start() {
 		return funcS();
+	}
+	
+	public static void loadData(String dataString) {
+		dataString += endMarkSymbol;
+		charArray = dataString.toCharArray();
+		
 	}
 
 }

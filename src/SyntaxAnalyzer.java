@@ -6,10 +6,11 @@ public class SyntaxAnalyzer {
         Scanner scan = new Scanner(System.in);
         System.out.println("Podaj symbole: ");
         String symbols = scan.nextLine();
-        Utilities.charArray = symbols.toCharArray();
+        Utilities.loadData(symbols);
         Utilities.init();
         boolean result = Utilities.start();
         Utilities.printResult(result);
+        scan.close();
 	}
 
 }
