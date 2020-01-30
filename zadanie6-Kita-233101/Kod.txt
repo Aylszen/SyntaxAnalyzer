@@ -1,0 +1,255 @@
+import java.util.Scanner;
+
+public class SyntaxAnalyzer {
+
+	public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Podaj symbole: ");
+        String symbols = scan.nextLine();
+        Utilities.loadData(symbols);
+        Utilities.init();
+        boolean result = Utilities.start();
+        Utilities.printResult(result);
+        scan.close();
+	}
+
+}
+
+import com.sun.xml.internal.messaging.saaj.util.CharReader;
+
+public class Utilities {
+
+	private static String firstO = "*:+-^";
+	private static String firstC = "0123456789";
+	private static String firstL = "0123456789";
+	private static String firstLPrim = "0123456789E";
+	private static String firstR = "0123456789";
+	private static String firstRPrim = ".E";
+	private static String firstP = "0123456789(";
+	private static String firstWPrim = "*:+-^E";
+	private static String firstW = "0123456789(";
+	private static String firstZ = "0123456789(E";
+	private static String firstS = "0123456789(";
+	
+	private static String endMarkSymbol = " ";
+	private static int iterator = 0;
+	public static char[] charArray;
+	private static char currentSymbol;
+
+	public static boolean funcS() {
+		System.out.println("S");
+		if (isInFirst(firstS)) {
+			if (funcW()) {
+				if (currentSymbol == ';') {
+					loadSymbol();
+					if (funcZ()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean funcZ() {
+		System.out.println("Z");
+		if (isInFirst(firstZ)) {
+			if (funcW()) {
+				if (currentSymbol == ';') {
+					loadSymbol();
+					if (funcZ()) {
+						return true;
+					}
+				}
+			}
+		} else if (isInFirstEpsilon(firstZ)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean funcW() {
+		System.out.println("W");
+		if (isInFirst(firstW)) {
+			if (funcP() && funcWPrim()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean funcWPrim() {
+		System.out.println("W'");
+		if (isInFirst(firstWPrim)) {
+			if (funcO() && funcW()) {
+				return true;
+			}
+		} else if (isInFirstEpsilon(firstWPrim)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean funcP() {
+		System.out.println("P");
+		if (isInFirst(firstP)) {
+			if (currentSymbol == '(') {
+				loadSymbol();
+				if (funcW()) {
+					if (currentSymbol == (')')) {
+						loadSymbol();
+						System.out.println("Weszlo )");
+						return true;
+					}
+				}
+			} else if (funcR()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean funcR() {
+		System.out.println("R");
+		if (isInFirst(firstR)) {
+			if (funcL() && funcRPrim()) {
+				return true;
+			}
+
+		} else {
+			return false;
+		}
+		return false;
+
+	}
+
+	public static boolean funcRPrim() {
+		System.out.println("R'");
+		if (isInFirst(firstRPrim)) {
+			loadSymbol();
+			if (funcL()) {
+				return true;
+			}
+
+		} else if (isInFirstEpsilon(firstRPrim)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean funcL() {
+		System.out.println("L");
+		if (isInFirst(firstL)) {
+			if (funcC() && funcLPrim()) {
+				return true;
+			}
+
+		} else {
+			return false;
+		}
+		return false;
+
+	}
+
+	public static boolean funcLPrim() {
+		System.out.println("L'");
+		if (isInFirst(firstLPrim)) {
+			if (funcL()) {
+				return true;
+			}
+
+		} else if (isInFirstEpsilon(firstLPrim)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean funcC() {
+		System.out.println("C");
+		if (isInFirst(firstC)) {
+			if (loadSymbol()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean funcO() {
+		System.out.println("O");
+		if (isInFirst(firstO)) {
+			if (loadSymbol()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean loadSymbol() {
+		if (iterator + 1 < charArray.length) {
+			iterator++;
+			currentSymbol = charArray[iterator];
+			if (!(currentSymbol == endMarkSymbol.charAt(0) && isFinished()))
+			{
+				System.out.println("Current char(load): " + currentSymbol);
+			} else
+			{
+				System.out.println("No more symbols to read!");
+			}
+		}
+		return true;
+	}
+
+	public static void init() {
+		iterator = 0;
+		currentSymbol = charArray[iterator];
+		System.out.println("Current char: " + currentSymbol);
+	}
+
+	public static boolean isInFirst(String first) {
+		if (isFinished()) {
+			return false;
+		}
+		if (first.indexOf(currentSymbol) != -1) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isInFirstEpsilon(String first) {
+		if (first.indexOf('E') != -1) {
+			System.out.println("Epsilon");
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isFinished() {
+		if (iterator == charArray.length - 1) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static void printResult(boolean result)
+	{
+		if (result == true) {
+			System.out.println("Symbole zgodne z gramatyka");
+		}
+		else
+		{
+			System.out.println("Symbole niezgodne z gramatyka!");
+		}
+	}
+	
+	public static boolean start() {
+		return funcS();
+	}
+	
+	public static void loadData(String dataString) {
+		dataString += endMarkSymbol;
+		charArray = dataString.toCharArray();
+		
+	}
+
+}
